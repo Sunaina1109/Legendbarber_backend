@@ -14,7 +14,8 @@ app.post('/send-email', (req, res) => {
   // Handle email sending logic here
 });
 
-app.use(cors());
+app.use(cors({ origin: "https://legendbarberstudio.com" }));
+app.use(express.json()); 
 app.use(bodyParser.json());
 
 // Route to handle form submission
