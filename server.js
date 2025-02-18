@@ -4,37 +4,43 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 
 const app = express();
-const PORT = 5000; // Match the frontend server port for simplicity
+const PORT = 5000;
+app.get('/', (req, res) => {
+  res.send('Hello, World!'); // Basic response to check if the server is working
+});
 
-// Middleware
+// Other routes, e.g. for your API
+app.post('/send-email', (req, res) => {
+  // Handle email sending logic here
+});
+
+app.use(cors());
 app.use(bodyParser.json());
-
-// Allow CORS from the frontend
-const allowedOrigins = ["http://localhost:5173", "https://legendbarberstudio.com"];
-app.use(cors({ origin: allowedOrigins }));
 
 // Route to handle form submission
 app.post("/send-email", async (req, res) => {
-  const { name, number, email, store, gender, services } = req.body; // Added 'gender' here
+  const { name, number, email, store, gender, services, date, time } = req.body; // ✅ Added 'date' here
 
-  if (!name || !email || !store || !gender) { // Ensure gender is also required
-    return res.status(400).json({ success: false, message: "Missing required fields" });
+  if (!name || !email || !store || !gender || !date || !time) {
+    // ✅ Ensure 'date' is required
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing required fields" });
   }
 
   try {
-    // Configure nodemailer
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "cosmicdatasystems@gmail.com", // Replace with your email
-        pass: "znat fxmr tkyb jflj", // Replace with your email password or app password
+        user: "cosmicdatasystems@gmail.com",
+        pass: "znat fxmr tkyb jflj",
       },
     });
 
     // Email options
     const mailOptions = {
-      from: "Gmail", // Sender's email
-      to: "cosmicdatasystems@gmail.com", // Recipient's email
+      from: "Gmail",
+      to: "cosmicdatasystems@gmail.com",
       subject: "Appointment Request",
       html: `
         <h2>Hello Team,</h2>
@@ -43,9 +49,15 @@ app.post("/send-email", async (req, res) => {
         <p><strong>Number:</strong> ${number}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Store:</strong> ${store}</p>
-        <p><strong>Gender:</strong> ${gender.charAt(0).toUpperCase() + gender.slice(1)}</p> <!-- Capitalize gender -->
-        <p><strong>date:</strong> ${date}</p>
-        <p><strong>Services:</strong> ${services.length > 0 ? services.join(", ") : "No services selected"}</p>
+        <p><strong>Gender:</strong> ${
+          gender.charAt(0).toUpperCase() + gender.slice(1)
+        }</p>
+        <p><strong>Date:</strong> ${date}</p> <!-- ✅ Now 'date' is correctly defined -->
+        <p><strong>Time:</strong> ${time}</p> <!-- ✅ Now 'time' is correctly defined -->
+
+        <p><strong>Services:</strong> ${
+          services.length > 0 ? services.join(", ") : "No services selected"
+        }</p>
       `,
     };
 
