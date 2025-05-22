@@ -9,12 +9,12 @@ app.get('/', (req, res) => {
   res.send('Hello, World!'); // Basic response to check if the server is working
 });
 
-// Other routes, e.g. for your API
-app.post('/send-email', (req, res) => {
-  // Handle email sending logic here
-});
 
-app.use(cors({ origin: "https://legendbarberstudio.com" }));
+app.use(cors({
+  origin: "*",  // Allow all origins (for testing)
+  methods: ["POST", "GET"],
+  allowedHeaders: ["Content-Type"],
+}));
 app.use(express.json()); 
 app.use(bodyParser.json());
 
